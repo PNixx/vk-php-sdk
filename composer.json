@@ -1,0 +1,25 @@
+{
+  "name": "PNixx/vk-php-sdk",
+  "version": "1.0.0",
+  "description": "Vkontakte PHP SDK",
+  "keywords": ["vkontakte", "sdk", "vk"],
+  "type": "library",
+  "homepage": "https://github.com/PNixx/vk-php-sdk",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sergey Odintsov",
+      "homepage": "http://pnixx.ru",
+      "email": "nixx.dj@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.0",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "classmap": ["vk.php"]
+  }
+}
