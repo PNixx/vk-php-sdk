@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version 1.0.0
+ * @version 1.0.1
  * @author  Odintsov S.A. https://github.com/PNixx
  */
 class Vk {
@@ -187,9 +187,8 @@ class Vk {
 		//Сохраняем файл
 		$audio = $this->method("audio.save", array(
 			"server" => $json->server,
-			"audio"  => urlencode($json->audio),
-			"hash"   => $json->hash,
-			'v'      => '3.0'
+			"audio"  => $json->audio,
+			"hash"   => $json->hash
 		));
 
 		//Проверяем сохранили ли файл
@@ -197,10 +196,8 @@ class Vk {
 			throw new Exception("audio.save error: " . $audio->error->error_code . ': ' . $audio->error->error_msg, 400);
 		}
 
-		if( isset($audio->response->aid) == false ) {
-			print_r($audio);
-
-			return false;
+		if( isset($audio->response->id) == false ) {
+			throw new Exception(print_r($audio, true), 400);
 		}
 
 		//Спим пол-секунды
@@ -209,10 +206,9 @@ class Vk {
 		//Если загружали аудио в группу
 		if( $group_id ) {
 			$group_aid = $this->method("audio.add", array(
-				"aid" => $audio->response->aid,
-				"oid" => $audio->response->owner_id,
-				"gid" => $group_id,
-				'v'   => '3.0'
+				"audio_id" => $audio->response->id,
+				"owner_id" => $audio->response->owner_id,
+				"group_id" => $group_id
 			));
 
 			//Добавляли в группу, спим секунду
@@ -222,9 +218,9 @@ class Vk {
 		//Возвращаем ссылку на файл
 		return array(
 			"group_aid" => isset($group_aid) ? $group_aid->response : null,
-			"aid"       => $audio->response->aid,
+			"aid"       => $audio->response->id,
 			"owner_id"  => $audio->response->owner_id,
-			"link"      => "audio{$audio->response->owner_id}_{$audio->response->aid}",
+			"link"      => "audio{$audio->response->owner_id}_{$audio->response->id}",
 			"url"       => $audio->response->url
 		);
 	}
