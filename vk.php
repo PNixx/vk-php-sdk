@@ -79,7 +79,7 @@ class Vk {
 	 * Конструктор
 	 * @param string $access_token
 	 */
-	public function __construct($access_token) {
+	public function __construct($access_token = null) {
 
 		$this->access_token = $access_token;
 	}
@@ -88,49 +88,49 @@ class Vk {
 	 * Делает запрос к Api VK
 	 * @param string     $method Метод
 	 * @param array|null $params Параметры запроса
-	 * @param bool       $post   Отправить запрос как post
 	 * @param int        $try    Количество попыток
 	 * @return bool|mixed
 	 * @throws Exception
 	 */
-	public function method($method, array $params = [], $post = false, $try = 2) {
+	public function method($method, array $params = [], $try = 2) {
 
 		//Если в параметрах не указана версия, ставим по умолчанию
 		if( isset($params['v']) == false ) {
 			$params['v'] = $this->v;
 		}
 
+		//Добавляем токен
+		if( $this->access_token ) {
+			$params['access_token'] = $this->access_token;
+		}
+
 		//Генерируем строку запроса
 		$p = http_build_query($params);
 
-		//Генерируем заголовок для POST запроса
-		$context = null;
-		if( $post ) {
-			$context = stream_context_create(array(
-				'http' => array(
-					'method'  => 'POST',
-					'header'  => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
-					'content' => $p,
-				),
-			));
-		}
+		//Инициализируем запрос
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $this->url . $method . '?' . $p);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HEADER, false);
 
 		//Пытаемся выполнить запрос
 		$request = 0;
 		while( $request < $try ) {
-			try {
+			$json = curl_exec($ch);
 
-				//Выполняем запрос
-				$response = file_get_contents($this->url . $method . "?" . ($post == false ? ($p ? $p . "&" : "") : "") . "access_token=" . $this->access_token, null, $context);
-				if( $response ) {
-					return json_decode($response);
-				}
-			} catch( Exception $e ) {
+			//Check HTTP Code
+			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			if( $status == 200 ) {
+
+				//Возвращаем результат
+				return json_decode($json);
+			} else {
 				$request++;
 				if( $request < $try ) {
 					usleep(500);
 				} else {
-					throw $e;
+					throw new VkException('You have exceeded the number of attempts', 500);
 				}
 			}
 		}
