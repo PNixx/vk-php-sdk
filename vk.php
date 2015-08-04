@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version 1.0.1
+ * @version 1.2.0
  * @author  Odintsov S.A. https://github.com/PNixx
  */
 class Vk {
@@ -16,7 +16,7 @@ class Vk {
 	 * Версия API VKontakte
 	 * @var string
 	 */
-	private $v = '5.27';
+	private $v = '5.35';
 
 	/**
 	 * Ссылка на api vk
@@ -90,7 +90,7 @@ class Vk {
 	 * @param array|null $params Параметры запроса
 	 * @param int        $try    Количество попыток
 	 * @return bool|mixed
-	 * @throws Exception
+	 * @throws VkException
 	 */
 	public function method($method, array $params = [], $try = 2) {
 
@@ -123,14 +123,22 @@ class Vk {
 			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			if( $status == 200 ) {
 
+				//Конвертируем json
+				$response = json_decode($json);
+
+				//Если ответ содержит ошибку
+				if( isset($response->error) ) {
+					throw new VkException($response->error->error_msg, $response->error->error_code, $response);
+				}
+
 				//Возвращаем результат
-				return json_decode($json);
+				return $response;
 			} else {
 				$request++;
 				if( $request < $try ) {
 					usleep(500);
 				} else {
-					throw new VkException('You have exceeded the number of attempts', 500);
+					throw new VkException('You have exceeded the number of attempts', VkException::ERROR_EXCEEDED_ATTEMPTS);
 				}
 			}
 		}
