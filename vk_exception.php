@@ -2,7 +2,8 @@
 
 /**
  * VKontakte Exception class
- * @author  Odintsov S.A. https://github.com/PNixx
+ * @author  Odintsov S.A.
+ * @link https://github.com/PNixx
  */
 class VkException extends Exception {
 
@@ -61,12 +62,12 @@ class VkException extends Exception {
 	public function __construct($message, $code, $response = null) {
 		$this->response = $response;
 		$this->error_code = $code;
-		parent::__construct($message, 500);
+		parent::__construct($code . ': ' . $message, 500);
 	}
 
 	/**
 	 * Получение ответа запроса
-	 * @return array|null
+	 * @return stdClass
 	 */
 	public function getResponse() {
 		return $this->response;
