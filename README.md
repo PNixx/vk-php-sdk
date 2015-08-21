@@ -1,9 +1,16 @@
 VKontakte PHP SDK
 =================
 
-Require PHP 5.5
+Require:
+
+* PHP 5.5
+* Composer (Optional)
 
 The VK Platform http://vk.com/dev is a set of APIs that make your application more social.
+
+##Install
+
+	composer require pnixx/vk-php-sdk
 
 Usage
 -----
