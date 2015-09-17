@@ -109,7 +109,15 @@ class Vk {
 
 		//Инициализируем запрос
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->url . $method . '?' . $p);
+
+		//Если длинна запроса больше 2kb, отправляем пост
+		if( strlen($p) > 2000 ) {
+			curl_setopt($ch, CURLOPT_URL, $this->url . $method);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+		} else {
+			curl_setopt($ch, CURLOPT_URL, $this->url . $method . '?' . $p);
+		}
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, false);
@@ -136,9 +144,9 @@ class Vk {
 			} else {
 				$request++;
 				if( $request < $try ) {
-					usleep(500);
+					sleep(1);
 				} else {
-					throw new VkException('You have exceeded the number of attempts', VkException::ERROR_EXCEEDED_ATTEMPTS);
+					throw new VkException('You have exceeded the number of attempts, response status: ' . $status, VkException::ERROR_EXCEEDED_ATTEMPTS, json_decode($json));
 				}
 			}
 		}
