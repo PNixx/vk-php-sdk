@@ -43,6 +43,7 @@ class VkException extends Exception {
 	const ERROR_ACCESS_ALBUM_DENIED = 200;
 	const ERROR_ACCESS_AUDIO_DENIED = 201;
 	const ERROR_ACCESS_GROUP_DENIED = 203;
+	const ERROR_REMOVE_COPYRIGHT = 270;
 	const ERROR_ALBUM_IS_FULL = 300;
 
 	//Превышено кол-во попыток получить данные

@@ -207,11 +207,7 @@ class Vk {
 			"hash"   => $json->hash
 		));
 
-		//Проверяем сохранили ли файл
-		if( isset($audio->error) || !isset($audio->response) ) {
-			throw new Exception("audio.save error: " . $audio->error->error_code . ': ' . $audio->error->error_msg, 400);
-		}
-
+		//Неизвестная ошибка
 		if( isset($audio->response->id) == false ) {
 			throw new Exception(print_r($audio, true), 400);
 		}
