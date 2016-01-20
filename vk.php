@@ -25,6 +25,19 @@ class Vk {
 	private $url = "https://api.vk.com/method/";
 
 	/**
+	 * Proxy host:port
+	 * @var string
+	 */
+	private $proxy;
+
+	/**
+	 * Proxy username:password
+	 * @var string
+	 */
+	private $proxy_auth;
+
+
+	/**
 	 * Проверяет по кукам, авторизован ли юзер
 	 * Полезна для приложений VK в iframe
 	 * @param int $app_id
@@ -78,10 +91,13 @@ class Vk {
 	/**
 	 * Конструктор
 	 * @param string $access_token
+	 * @param string $proxy
+	 * @param string $proxy_auth
 	 */
-	public function __construct($access_token = null) {
-
+	public function __construct($access_token = null, $proxy = null, $proxy_auth = null) {
 		$this->access_token = $access_token;
+		$this->proxy = $proxy;
+		$this->proxy_auth = $proxy_auth;
 	}
 
 	/**
@@ -121,6 +137,15 @@ class Vk {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, false);
+
+		//Если было указано прокси
+		if( $this->proxy ) {
+			curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+			curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+			if( $this->proxy_auth ) {
+				curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxy_auth);
+			}
+		}
 
 		//Пытаемся выполнить запрос
 		$request = 0;
