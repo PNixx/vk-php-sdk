@@ -225,6 +225,10 @@ class Vk {
 		//Файл отправили, спим 1 сек, чтобы не забанили
 		sleep(1);
 
+		if( empty($json->server) ) {
+			throw new VkException('Unknown response: ' . json_encode($json), VkException::ERROR_UNKNOWN);
+		}
+
 		//Сохраняем файл
 		$audio = $this->method("audio.save", array(
 			"server" => $json->server,
@@ -278,7 +282,7 @@ class Vk {
 
 		//Получаем сервер для загрузки изображения
 		$response = $this->method("photos.getWallUploadServer", $params);
-		if( isset($response->response) == false ) {
+		if( empty($response->response->upload_url) ) {
 			throw new Exception('Error get server url', 400);
 		}
 		$server = $response->response->upload_url;
