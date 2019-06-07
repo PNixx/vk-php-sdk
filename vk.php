@@ -275,9 +275,9 @@ class Vk {
 	 */
 	public function uploadImage($file, $group_id = null) {
 
-		$params = array('v' => '3.0');
+		$params = array('v' => $this->v);
 		if( $group_id ) {
-			$params['gid'] = $group_id;
+			$params['group_id'] = $group_id;
 		}
 
 		//Получаем сервер для загрузки изображения
@@ -301,8 +301,8 @@ class Vk {
 			"server" => $json->server,
 			"photo"  => $json->photo,
 			"hash"   => $json->hash,
-			"gid"    => $group_id,
-			"v"      => '3.0'
+			"group_id"    => $group_id,
+			"v"      => $this->v
 		));
 
 		if( isset($photo->response[0]->id) ) {
