@@ -16,7 +16,7 @@ class Vk {
 	 * Версия API VKontakte
 	 * @var string
 	 */
-	private $v = '5.35';
+	private $v = '5.131';
 
 	/**
 	 * Ссылка на api vk
