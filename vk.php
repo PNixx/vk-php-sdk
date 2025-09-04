@@ -22,7 +22,7 @@ class Vk {
 	 * Ссылка на api vk
 	 * @var string
 	 */
-	private $url = "https://api.vk.com/method/";
+	private $url = "https://api.vk.ru/method/";
 
 	/**
 	 * Proxy host:port
